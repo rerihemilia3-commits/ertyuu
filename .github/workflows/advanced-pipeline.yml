@@ -1,0 +1,59 @@
+
+name: Advanced Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+      build_number:
+        description: 'Build number'
+        required: true
+        type: string
+
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show input parameters
+        run: |
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Build number: ${{ inputs.build_number }}"
+          echo "Debug mode: ${{ inputs.debug }}"
+
+      - name: Count commits
+        run: |
+          echo "Total commits:"
+          git rev-list --count HEAD
+
+  windows-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Windows build information
+        run: |
+          Write-Output "Windows build started"
+          Write-Output "Environment: ${{ inputs.environment }}"
+          Write-Output "Build number: ${{ inputs.build_number }}"
+          Write-Output "Debug mode: ${{ inputs.debug }}"
